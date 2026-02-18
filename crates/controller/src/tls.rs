@@ -1,9 +1,10 @@
 use anyhow::{anyhow, Result};
-use rustls::{ServerConfig, ServerConnection, SupportedCipherSuite, Certificate};
+use rustls::{ServerConfig, Certificate};
 use rustls::{RootCertStore, ServerConfig as _};
 use rustls_pemfile::{certs, pkcs8_private_keys};
 use std::fs::File;
 use std::io::BufReader;
+use tonic::transport::{Identity as TonicIdentity, Certificate as TonicCertificate};
 
 pub fn server_config(
     cert_path: &str,
@@ -49,4 +50,17 @@ fn load_client_ca(path: &str) -> Result<std::sync::Arc<rustls::server::WebPkiCli
     }
     let verifier = rustls::server::WebPkiClientVerifier::builder(store).build()?;
     Ok(std::sync::Arc::new(verifier))
+}
+
+pub fn tonic_server_identity(cert_path: &str, key_path: &str) -> Result<TonicIdentity> {
+    use std::fs;
+    let cert = fs::read(cert_path)?;
+    let key = fs::read(key_path)?;
+    Ok(TonicIdentity::from_pem(cert, key))
+}
+
+pub fn tonic_client_ca(client_ca_path: &str) -> Result<TonicCertificate> {
+    use std::fs;
+    let ca = fs::read(client_ca_path)?;
+    Ok(TonicCertificate::from_pem(ca))
 }

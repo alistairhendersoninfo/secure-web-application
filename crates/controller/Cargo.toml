@@ -22,3 +22,8 @@ uuid = { version = "1", features = ["v4", "serde"] }
 dotenvy = "0.15"
 shared = { path = "../shared" }
 http = "1"
+tonic = { version = "0.11", features = ["tls", "transport"] }
+prost = "0.12"
+
+[build-dependencies]
+tonic-build = "0.12"

@@ -11,3 +11,10 @@ pub async fn connect(database_url: &str) -> Result<Db> {
         .await?;
     Ok(pool)
 }
+
+pub async fn migrate(pool: &Db) -> Result<()> {
+    // Embed migrations from workspace root migrations folder
+    // Path is relative to this crate (crates/controller)
+    sqlx::migrate!("../../migrations").run(pool).await?;
+    Ok(())
+}
