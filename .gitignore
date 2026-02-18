@@ -1,0 +1,10 @@
+target/
+**/*.rs.bk
+.DS_Store
+.env
+.env.*
+node_modules/
+.idea/
+.vscode/
+dist/
+coverage/

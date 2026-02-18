@@ -1,0 +1,23 @@
+[workspace]
+members = [
+    "crates/controller",
+    "crates/agent",
+    "crates/shared",
+]
+resolver = "2"
+
+[workspace.package]
+edition = "2021"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+unused_extern_crates = "deny"
+unused_imports = "deny"
+
+[workspace.lints.clippy]
+all = "warn"
+pedantic = "warn"
+nursery = "warn"
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"

@@ -1,0 +1,19 @@
+agent:
+  - changed-files:
+      - any-glob-to-any-file: ['crates/agent/**']
+
+controller:
+  - changed-files:
+      - any-glob-to-any-file: ['crates/controller/**']
+
+shared:
+  - changed-files:
+      - any-glob-to-any-file: ['crates/shared/**']
+
+migrations:
+  - changed-files:
+      - any-glob-to-any-file: ['migrations/**']
+
+ci:
+  - changed-files:
+      - any-glob-to-any-file: ['.github/**']
