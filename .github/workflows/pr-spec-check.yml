@@ -19,7 +19,7 @@ jobs:
             }
             const body = pr.body || '';
             const title = pr.title || '';
-            const requiredSections = ['## Goals', '## Architecture Overview', '## Acceptance Criteria'];
+            const requiredSections = ['## Goals', '## Non-Goals', '## Architecture Overview', '## Security Posture', '## Acceptance Criteria'];
             const missing = requiredSections.filter(s => !body.includes(s));
             const hasMermaid = body.includes('```mermaid');
             const tooShort = body.trim().length < 400; // encourage detail

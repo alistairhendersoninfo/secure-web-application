@@ -31,3 +31,9 @@ Agent Notes
 - When editing files, make minimal, surgical changes.
 - Do not introduce new dependencies casually; justify security impact.
 - Avoid adding license headers or changing licensing unless explicitly requested.
+
+LLM/Codex Guidance (PR Content)
+- Always include a comprehensive SPEC in the PR body following the template.
+- Include at least one mermaid diagram; select diagram type appropriate to the change (sequence, flowchart, ERD).
+- Prefer specification prose and schemas over code in the PR description.
+- Keep language precise and unambiguous; expand acronyms on first use.

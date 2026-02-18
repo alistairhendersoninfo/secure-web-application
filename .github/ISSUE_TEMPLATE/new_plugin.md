@@ -28,5 +28,4 @@ Security considerations
 Attack surface and mitigation (validation, least privilege, safe defaults).
 
 Testing plan
-Unit/integration tests, fixtures, target environments.
-
+Unit/integration tests, fixtures, target environments. Include a sequence diagram of plugin interactions if non-trivial.
