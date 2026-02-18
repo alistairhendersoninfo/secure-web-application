@@ -5,6 +5,7 @@ use rustls_pemfile::{certs, pkcs8_private_keys};
 use std::fs::File;
 use std::io::BufReader;
 use tonic::transport::{Identity as TonicIdentity, Certificate as TonicCertificate};
+use rcgen::{CertificateParams, DistinguishedName, DnType, KeyPair, Certificate as RcCert, IsCa, BasicConstraints};
 
 pub fn server_config(
     cert_path: &str,
@@ -63,4 +64,47 @@ pub fn tonic_client_ca(client_ca_path: &str) -> Result<TonicCertificate> {
     use std::fs;
     let ca = fs::read(client_ca_path)?;
     Ok(TonicCertificate::from_pem(ca))
+}
+
+pub fn ensure_self_signed(cert_path: &str, key_path: &str, cn: &str, valid_days: u64) -> Result<()> {
+    use std::fs;
+    let needs_new = match fs::metadata(cert_path) {
+        Ok(meta) => {
+            if let Ok(modified) = meta.modified() {
+                if let Ok(age) = modified.elapsed() {
+                    age.as_secs() > valid_days * 24 * 3600
+                } else { true }
+            } else { true }
+        }
+        Err(_) => true,
+    } || fs::metadata(key_path).is_err();
+
+    if !needs_new { return Ok(()); }
+
+    let mut params = CertificateParams::default();
+    let mut dn = DistinguishedName::new();
+    dn.push(DnType::CommonName, cn);
+    params.distinguished_name = dn;
+    // server auth
+    params.is_ca = IsCa::NoCa;
+    params.not_before = rcgen::date_time_ymd(2020, 1, 1);
+    params.not_after = rcgen::date_time_ymd(2030, 1, 1); // will be constrained by rotation interval
+    params.alg = &rcgen::PKCS_ECDSA_P256_SHA256;
+    // SubjectAltName for "controller" and localhost
+    params.subject_alt_names = vec![
+        rcgen::SanType::DnsName("controller".into()),
+        rcgen::SanType::DnsName("localhost".into()),
+        rcgen::SanType::IpAddress("127.0.0.1".parse().unwrap()),
+    ];
+
+    let key = KeyPair::generate(params.alg).map_err(|e| anyhow!("rcgen key: {e}"))?;
+    params.key_pair = Some(key);
+    let cert = RcCert::from_params(params).map_err(|e| anyhow!("rcgen cert: {e}"))?;
+    let cert_pem = cert.serialize_pem().map_err(|e| anyhow!("rcgen serialize: {e}"))?;
+    let key_pem = cert.serialize_private_key_pem();
+
+    fs::create_dir_all(std::path::Path::new(cert_path).parent().unwrap_or_else(|| std::path::Path::new(".")))?;
+    fs::write(cert_path, cert_pem)?;
+    fs::write(key_path, key_pem)?;
+    Ok(())
 }

@@ -20,6 +20,11 @@ async fn main() -> Result<()> {
     let pool = db::connect(&cfg.database_url).await?;
     db::migrate(&pool).await?;
 
+    // Optionally self-generate certs if requested
+    if std::env::var("TLS_SELF_SIGNED").ok().as_deref() == Some("1") {
+        tls::ensure_self_signed(&cfg.tls_cert_path, &cfg.tls_key_path, "controller", 7)?;
+    }
+
     // gRPC server (mTLS)
     let grpc_addr: std::net::SocketAddr = cfg.grpc_bind_addr.parse()?;
     let identity = tls::tonic_server_identity(&cfg.tls_cert_path, &cfg.tls_key_path)?;

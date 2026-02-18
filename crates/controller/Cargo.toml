@@ -24,6 +24,7 @@ shared = { path = "../shared" }
 http = "1"
 tonic = { version = "0.11", features = ["tls", "transport"] }
 prost = "0.12"
+rcgen = "0.12"
 
 [build-dependencies]
 tonic-build = "0.12"

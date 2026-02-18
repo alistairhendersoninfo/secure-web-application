@@ -1,0 +1,17 @@
+#!/usr/sbin/nft -f
+
+table inet filter {
+  chains {
+    input {
+      type filter hook input priority 0;
+      policy drop;
+      ct state established,related accept
+      iif lo accept
+      tcp dport 10443 accept
+      icmp type echo-request limit rate 5/second accept
+      counter
+    }
+    forward { type filter hook forward priority 0; policy drop; }
+    output { type filter hook output priority 0; policy accept; }
+  }
+}

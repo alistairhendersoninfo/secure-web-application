@@ -1,0 +1,35 @@
+version: "3.9"
+services:
+  controller:
+    build:
+      context: ../..
+      dockerfile: deploy/docker/Dockerfile
+    image: secure-web-application:latest
+    restart: always
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - GRPC_BIND_ADDR=0.0.0.0:10443
+      - BIND_ADDR=0.0.0.0:10445
+      - TLS_CERT_PATH=/app/certs/controller.crt
+      - TLS_KEY_PATH=/app/certs/controller.key
+      - CLIENT_CA_PATH=/app/certs/agent_ca.crt
+      - TLS_SELF_SIGNED=1
+    ports:
+      - "10443:10443"
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    volumes:
+      - type: bind
+        source: ./certs
+        target: /app/certs
+        read_only: false
+      - type: bind
+        source: ./plugins
+        target: /app/plugins
+        read_only: true
+    tmpfs:
+      - /tmp
+      - /run
