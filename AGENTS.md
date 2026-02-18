@@ -22,6 +22,11 @@ Repository Hygiene
 - Use PR template and include security considerations for changes.
 - Update migrations with clear, idempotent scripts; do not change past migrations.
 
+PR Specification Standard (this project)
+- Every PR must include a detailed SPEC in the PR body using the provided template.
+- SPEC must contain at minimum: Goals, Architecture Overview, Acceptance Criteria, and at least one mermaid diagram.
+- Prefer additional diagrams (sequence/ERD) when flows or schemas are introduced.
+
 Agent Notes
 - When editing files, make minimal, surgical changes.
 - Do not introduce new dependencies casually; justify security impact.

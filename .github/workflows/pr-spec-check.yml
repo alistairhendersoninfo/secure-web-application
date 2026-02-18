@@ -1,0 +1,34 @@
+name: PR Spec Check
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+
+jobs:
+  spec:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate PR body for SPEC and mermaid
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            if (!pr) {
+              core.setFailed('No pull_request in context');
+              return;
+            }
+            const body = pr.body || '';
+            const title = pr.title || '';
+            const requiredSections = ['## Goals', '## Architecture Overview', '## Acceptance Criteria'];
+            const missing = requiredSections.filter(s => !body.includes(s));
+            const hasMermaid = body.includes('```mermaid');
+            const tooShort = body.trim().length < 400; // encourage detail
+            let problems = [];
+            if (missing.length) problems.push(`Missing sections: ${missing.join(', ')}`);
+            if (!hasMermaid) problems.push('No mermaid diagram found (```mermaid code fence expected).');
+            if (tooShort) problems.push('PR body too short (<400 chars); expand specification.');
+            if (problems.length) {
+              core.setFailed('SPEC check failed: ' + problems.join(' '));
+            } else {
+              core.notice('SPEC check passed.');
+            }
