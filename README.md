@@ -18,4 +18,4 @@ Security Highlights
 - Postgres with RLS-ready schema and audit chain foundation.
 - Workspace-wide forbid-unsafe and lints.
 
-See `prompt.md` for the working requirements and architecture decisions we are iterating on.
+Quick nav: see `docs/INDEX.md` for all specs and plans, with links and recommended review order.

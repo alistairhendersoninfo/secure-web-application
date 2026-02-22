@@ -17,6 +17,10 @@ Security
 - No secrets committed; use env vars with secure storage.
 - Favor least privilege; avoid broad capabilities.
 
+Routing & Health
+- Sensitive endpoints must not use conventional names (e.g., /login, /admin, /health). Use non-guessable slugs per deployment.
+- Return uniform 404s for unknown routes; restrict health/readiness to loopback or authenticated contexts.
+
 Repository Hygiene
 - Keep CI green (fmt, clippy, build). Fix lints rather than suppress.
 - Use PR template and include security considerations for changes.
@@ -26,3 +30,4 @@ Agent Notes
 - When editing files, make minimal, surgical changes.
 - Do not introduce new dependencies casually; justify security impact.
 - Avoid adding license headers or changing licensing unless explicitly requested.
+- Always consult `docs/INDEX.md` to locate the authoritative SPEC or PLAN for the area you’re modifying; keep PR bodies aligned with those docs.
