@@ -16,6 +16,8 @@ Security
 - Validate and bound all inputs; enforce strict CSPs.
 - No secrets committed; use env vars with secure storage.
 - Favor least privilege; avoid broad capabilities.
+- Sensitive endpoints must not use conventional names (e.g., /login, /admin, /health). Use non-guessable slugs per deployment.
+- Return uniform 404s for unknown routes; restrict health/readiness to loopback or authenticated contexts.
 
 Repository Hygiene
 - Keep CI green (fmt, clippy, build). Fix lints rather than suppress.
