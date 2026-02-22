@@ -30,14 +30,15 @@ flowchart LR
 ```
 
 ## Detailed Design
-- Recommended default: Option B (React + Tailwind + shadcn/ui) for component completeness, if the team accepts Node-based build tooling under tightened supply-chain controls.
-- Alternate hardened mode: Option A for environments that forbid Node tooling; SSR HTML with htmx for interactivity and Tailwind core for styling.
+- Default (hardened): SSR-first (Option A) for all sensitive and admin surfaces (auth entry, initial landing, admin controls, health/readiness) using htmx + Tailwind core. Routes must follow the routing obfuscation policy (non-guessable slugs; no conventional names).
+- App surfaces (post-auth, non-admin views): Option B (React + Tailwind + shadcn/ui) acceptable under pinned/hardened builds; progressive enhancement only.
 - Common guidelines:
   - CSP: `default-src 'self'; script-src 'self' 'nonce-<rand>'; object-src 'none'; frame-ancestors 'none'`. No third-party JS/CDN.
   - No client-side secrets; all secrets remain server-side.
   - Components must be keyboard-accessible; color contrast checks.
   - Theming via CSS variables and Tailwind tokens.
   - Avoid client-side routing for critical admin flows; prefer server validation.
+  - Sensitive pages must not be named "login", "dashboard", "health", etc.; use deployment-specific non-guessable slugs.
 
 ## Security Posture
 - Strict CSP; no inline scripts without nonces; no remote scripts.
@@ -49,10 +50,10 @@ flowchart LR
 - Feature flags for Option A vs Option B builds.
 
 ## Acceptance Criteria
-- Decision recorded: default to React + Tailwind + shadcn/ui for admin UX; provide SSR/htmx fallback profile.
-- CSP policy defined and enforced across pages.
+- Decision recorded: SSR-first for sensitive/admin surfaces; React permitted for non-admin post-auth views.
+- Routing obfuscation enforced; CSP policy defined and enforced across pages.
 - Accessibility checklist documented for components.
 
 ## Open Questions
 - Do we require a no-Node build path for classified environments by default?
-- Which UI areas must remain SSR-only (e.g., login, enrollment)?
+- Which non-admin areas, if any, can opt into React by default?
