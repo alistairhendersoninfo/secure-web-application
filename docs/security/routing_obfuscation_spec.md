@@ -11,7 +11,7 @@
 ## Architecture Overview
 - Sensitive endpoints are not exposed at conventional paths (e.g., `/login`, `/admin`, `/dashboard`, `/health`, `/status`).
 - A deployment-specific secret slug (e.g., `/a9b4d3c7e1f8`) maps to each sensitive entrypoint.
-- Slugs are configured via secure config at install time and remain stable (no rotation) unless explicitly reconfigured.
+- Slugs are configured via secure config and may rotate with cutover windows.
 
 ```mermaid
 flowchart LR
@@ -22,7 +22,7 @@ flowchart LR
 
 ## Detailed Design
 - Slug format: at least 16 random bytes, base32/base62 encoded; length >= 20 characters.
-- Rotation: not used by default. Slugs remain constant to reduce operator burden and user confusion. Reconfiguration (if ever needed) follows a maintenance process with clear communication and audit.
+- Rotation: dual-slug support for rolling transitions (old+new valid for <= 24h), audit logged.
 - Response normalization:
   - Unknown paths return 404 with identical body/latency across variants.
   - No server banners or stack traces; minimal error bodies.
@@ -35,8 +35,8 @@ flowchart LR
 - Obfuscation reduces automated scanning effectiveness and noise; not a replacement.
 
 ## Operations
-- Slug secrets managed like credentials (access controls). Rotation is not standard procedure.
-- Document maintenance process if reconfiguration is required.
+- Slug secrets managed like credentials (rotation process, access controls).
+- Documented runbook for slug rotation and client communication.
 
 ## Acceptance Criteria
 - Sensitive endpoints are accessible only via configured slugs; no obvious paths exist.
@@ -45,4 +45,5 @@ flowchart LR
 - Optional honey endpoints produce alerts when probed.
 
 ## Open Questions
+- Default rotation cadence for slugs? Triggered on major releases only?
 - Require IP allowlists for admin routes in addition to slugs?
