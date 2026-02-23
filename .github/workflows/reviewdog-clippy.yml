@@ -16,10 +16,5 @@ jobs:
         with:
           components: clippy
       - uses: Swatinem/rust-cache@v2
-      - name: Run clippy with reviewdog
-        uses: reviewdog/action-clippy@v2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          reporter: github-pr-review
-          level: warning
-          filter_mode: diff_context
+      - name: Run clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
