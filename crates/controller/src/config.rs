@@ -17,6 +17,12 @@ impl Config {
         let tls_cert_path = std::env::var("TLS_CERT_PATH")?;
         let tls_key_path = std::env::var("TLS_KEY_PATH")?;
         let client_ca_path = std::env::var("CLIENT_CA_PATH")?;
-        Ok(Self { bind_addr, database_url, tls_cert_path, tls_key_path, client_ca_path })
+        Ok(Self {
+            bind_addr,
+            database_url,
+            tls_cert_path,
+            tls_key_path,
+            client_ca_path,
+        })
     }
 }
