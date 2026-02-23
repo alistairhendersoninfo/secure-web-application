@@ -1,0 +1,47 @@
+name: Mermaid Validation
+
+on:
+  pull_request:
+    paths:
+      - '**/*.md'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install mermaid-cli
+        run: npm i -g @mermaid-js/mermaid-cli@10
+      - name: Validate mermaid in changed markdown
+        env:
+          BASE: ${{ github.base_ref }}
+          HEAD: ${{ github.head_ref }}
+        run: |
+          set -euo pipefail
+          git fetch origin "$BASE" --depth=1 || true
+          CHANGED=$(git diff --name-only "origin/$BASE...HEAD" | grep -E '\.md$' || true)
+          if [ -z "$CHANGED" ]; then echo "No changed markdown"; exit 0; fi
+          mkdir -p .mmd_out
+          rc=0
+          for f in $CHANGED; do
+            echo "Checking $f"
+            c=0
+            # extract mermaid code fences
+            awk 'BEGIN{m=0}{if($0 ~ /^```mermaid/){m=1;next} if(m==1 && $0 ~ /^```/){m=0;print "__END__";next} if(m==1){print}}' "$f" | awk -v file="$f" '{if($0=="__END__"){print SEP}{else{print}}}' SEP="\n__BLOCK__\n" > .mmd_tmp || true
+            if [ -s .mmd_tmp ]; then
+              awk 'BEGIN{b=0}{if($0=="__BLOCK__"){b++} else{print > (".mmd_out/" FILENAME "." b ".mmd")}}' FILENAME=$(basename "$f" | sed 's/\//_/g') .mmd_tmp
+              for m in .mmd_out/$(basename "$f" | sed 's/\//_/g').*.mmd; do
+                [ -f "$m" ] || continue
+                svg="${m%.mmd}.svg"
+                echo "Rendering $m -> $svg"
+                if ! mmdc -i "$m" -o "$svg" >/dev/null 2>&1; then
+                  echo "Mermaid render failed for $m" >&2
+                  rc=1
+                fi
+              done
+            fi
+          done
+          exit $rc
