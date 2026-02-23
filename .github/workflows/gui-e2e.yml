@@ -1,0 +1,24 @@
+name: GUI E2E (Playwright)
+
+on:
+  pull_request:
+
+jobs:
+  e2e:
+    if: ${{ hashFiles('ui-tests/**') != '' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install deps (if any)
+        run: |
+          if [ -f package.json ]; then npm ci; else echo "no package.json"; fi
+      - name: Install Playwright
+        run: npx -y playwright install --with-deps
+      - name: Run Playwright tests
+        run: |
+          if [ -d ui-tests ]; then npx playwright test; else echo "no ui-tests/ present"; fi
