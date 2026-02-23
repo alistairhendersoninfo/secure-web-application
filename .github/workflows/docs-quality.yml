@@ -1,0 +1,28 @@
+name: Docs Quality (codespell + lychee)
+
+on:
+  pull_request:
+    paths:
+      - '**/*.md'
+
+jobs:
+  codespell:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run codespell
+        uses: codespell-project/actions-codespell@master
+        with:
+          check_filenames: true
+          ignore_words_list: crate,thru
+          path: .
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Link check (lychee)
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --no-progress --verbose './**/*.md' --exclude '^(http://localhost|https://localhost)'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
