@@ -10,14 +10,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Determine changed Rust files
+        id: changed
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          set -e
+          git fetch origin "${{ github.base_ref }}" --depth=1 || true
+          files=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD" | grep -E '\.rs$' || true)
+          if [ -n "$files" ]; then echo "has_rs=true" >> $GITHUB_OUTPUT; else echo "has_rs=false" >> $GITHUB_OUTPUT; fi
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
       - name: Cache cargo
         uses: Swatinem/rust-cache@v2
       - name: Format
+        if: ${{ github.event_name == 'push' || steps.changed.outputs.has_rs == 'true' }}
         run: cargo fmt --all -- --check
       - name: Clippy
+        if: ${{ github.event_name == 'push' || steps.changed.outputs.has_rs == 'true' }}
         run: cargo clippy --workspace --all-targets -- -D warnings
       - name: Build
+        if: ${{ github.event_name == 'push' || steps.changed.outputs.has_rs == 'true' }}
         run: cargo build --workspace --locked
