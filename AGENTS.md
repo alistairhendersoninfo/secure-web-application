@@ -33,3 +33,9 @@ Agent Notes
 - Do not introduce new dependencies casually; justify security impact.
 - Avoid adding license headers or changing licensing unless explicitly requested.
 - Always consult `docs/INDEX.md` to locate the authoritative SPEC or PLAN for the area you’re modifying; keep PR bodies aligned with those docs.
+
+Linear Naming Convention
+- Use zero-padded numeric prefixes for phases and roadmap tasks to guarantee lexical sorting.
+- Phase format: `NN.Phase — <title>` (examples: `00.Phase — Baseline Approvals and Repo Hygiene`, `01.Phase — Core Security Foundations`).
+- Roadmap task format: `NN. <title>` (examples: `01. Auth Store ...`, `12. Site Gateway Topology`).
+- Never use non-padded variants like `Phase 1` or `1. <title>`.

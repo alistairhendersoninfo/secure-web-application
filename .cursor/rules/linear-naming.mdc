@@ -1,0 +1,15 @@
+---
+description: Enforce zero-padded Linear phase and task naming for sort stability
+alwaysApply: true
+---
+
+# Linear Naming Rule
+
+When creating or renaming Linear milestones/issues/tasks, use zero-padded numbering.
+
+- Phase naming: `NN.Phase — <title>`
+  - Example: `01.Phase — Core Security Foundations`
+- Subtask naming: `NN. <title>`
+  - Example: `07. Rate Limits and Backpressure Defaults`
+
+Do not use non-padded forms such as `Phase 1`, `Phase 01`, or `1. <title>`.
