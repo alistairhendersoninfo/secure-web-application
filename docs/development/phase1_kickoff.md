@@ -38,3 +38,4 @@ flowchart LR
 ## Risks & Mitigations
 - Config mistakes on slugs: strict config validation + startup logs
 - Backpressure: per-connection rate limits; drop-oldest + metrics
+\nNote: SPEC check should pass.
