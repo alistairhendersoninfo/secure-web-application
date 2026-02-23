@@ -1,10 +1,11 @@
 use axum::{routing::get, Router};
-use tower_http::set_header::SetResponseHeaderLayer;
 use http::HeaderValue;
+use tower_http::set_header::SetResponseHeaderLayer;
 
 pub fn app() -> Router {
     // Minimal routes; add security headers
-    let csp = HeaderValue::from_static("default-src 'self'; frame-ancestors 'none'; object-src 'none'");
+    let csp =
+        HeaderValue::from_static("default-src 'self'; frame-ancestors 'none'; object-src 'none'");
     let hsts = HeaderValue::from_static("max-age=63072000; includeSubDomains; preload");
     Router::new()
         .route("/healthz", get(|| async { "ok" }))

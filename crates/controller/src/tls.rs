@@ -1,6 +1,6 @@
 use anyhow::{anyhow, Result};
-use rustls::{ServerConfig, ServerConnection, SupportedCipherSuite, Certificate};
-use rustls::{RootCertStore, ServerConfig as _};
+use rustls::pki_types::{CertificateDer, PrivateKeyDer};
+use rustls::{RootCertStore, ServerConfig};
 use rustls_pemfile::{certs, pkcs8_private_keys};
 use std::fs::File;
 use std::io::BufReader;
@@ -15,7 +15,6 @@ pub fn server_config(
     let client_ca = load_client_ca(client_ca_path)?;
 
     let mut cfg = ServerConfig::builder()
-        .with_safe_defaults()
         .with_client_cert_verifier(client_ca)
         .with_single_cert(certs, key)?;
 
@@ -24,29 +23,33 @@ pub fn server_config(
     Ok(cfg)
 }
 
-fn load_certs(path: &str) -> Result<Vec<rustls::Certificate>> {
+fn load_certs(path: &str) -> Result<Vec<CertificateDer<'static>>> {
     let mut reader = BufReader::new(File::open(path)?);
     let certs = certs(&mut reader)
-        .map_err(|_| anyhow!("failed to read certs"))?
-        .into_iter()
-        .map(rustls::Certificate)
-        .collect();
+        .collect::<std::result::Result<Vec<_>, _>>()
+        .map_err(|_| anyhow!("failed to read certs"))?;
     Ok(certs)
 }
 
-fn load_key(path: &str) -> Result<rustls::PrivateKey> {
+fn load_key(path: &str) -> Result<PrivateKeyDer<'static>> {
     let mut reader = BufReader::new(File::open(path)?);
-    let mut keys = pkcs8_private_keys(&mut reader).map_err(|_| anyhow!("failed to read private key"))?;
-    let key = keys.remove(0);
-    Ok(rustls::PrivateKey(key))
+    let key = pkcs8_private_keys(&mut reader)
+        .next()
+        .ok_or_else(|| anyhow!("no private key found"))?
+        .map_err(|_| anyhow!("failed to read private key"))?;
+    Ok(PrivateKeyDer::Pkcs8(key))
 }
 
-fn load_client_ca(path: &str) -> Result<std::sync::Arc<rustls::server::WebPkiClientVerifier>> {
+fn load_client_ca(
+    path: &str,
+) -> Result<std::sync::Arc<dyn rustls::server::danger::ClientCertVerifier>> {
     let mut store = RootCertStore::empty();
     let mut reader = BufReader::new(File::open(path)?);
-    for cert in certs(&mut reader).map_err(|_| anyhow!("failed to read client CA"))? {
-        store.add(&Certificate(cert)).map_err(|e| anyhow!("{e}"))?;
+    for cert in certs(&mut reader) {
+        let cert = cert.map_err(|_| anyhow!("failed to read client CA"))?;
+        store.add(cert).map_err(|e| anyhow!("{e}"))?;
     }
-    let verifier = rustls::server::WebPkiClientVerifier::builder(store).build()?;
-    Ok(std::sync::Arc::new(verifier))
+    let verifier =
+        rustls::server::WebPkiClientVerifier::builder(std::sync::Arc::new(store)).build()?;
+    Ok(verifier)
 }

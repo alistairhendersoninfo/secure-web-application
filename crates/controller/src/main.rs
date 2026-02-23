@@ -1,9 +1,12 @@
 mod config;
 mod db;
-mod tls;
 mod server;
+mod tls;
 
 use anyhow::Result;
+use hyper_util::rt::{TokioExecutor, TokioIo};
+use hyper_util::server::conn::auto::Builder as ConnBuilder;
+use hyper_util::service::TowerToHyperService;
 use tokio::net::TcpListener;
 use tokio_rustls::TlsAcceptor;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
@@ -38,7 +41,12 @@ async fn main() -> Result<()> {
                     return;
                 }
             };
-            if let Err(err) = axum::serve(stream, app).await {
+            let io = TokioIo::new(stream);
+            let svc = TowerToHyperService::new(app);
+            if let Err(err) = ConnBuilder::new(TokioExecutor::new())
+                .serve_connection_with_upgrades(io, svc)
+                .await
+            {
                 tracing::warn!(?err, "serve error");
             }
         });
