@@ -28,7 +28,6 @@ Always preserve these markers so updates are idempotent.
 - Task title format: `NN. <title>`
 - Phase and milestone must share the same `NN.Phase` key.
 - Task numbering must follow `docs/ROADMAP.md` order exactly.
-
 ## Status Mapping
 - GitHub `OPEN` -> Linear state `Backlog` (or `In Progress` if already active)
 - GitHub `CLOSED` -> Linear state `Done`
