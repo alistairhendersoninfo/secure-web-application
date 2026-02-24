@@ -1,0 +1,46 @@
+DSS_VERSION: 1
+TASK_ID: GUI-<feature>-<nn>
+TASK_REVISION: 1
+RUN_ID: <uuid-or-timestamp>
+TOOL: <antigravity|claude-codebook|claude-google-plugin>
+STATUS: <IN_PROGRESS|BLOCKED|FAILED|PASSED|CLOSED>
+
+START_TIME: <ISO-8601>
+END_TIME: <ISO-8601>
+
+TASK_REQUIRED: <copied from task card>
+
+METHOD_USED:
+  - <how the tool executed the task>
+
+EXPECTED_OUTCOME:
+  - <copied from task card>
+
+ACTUAL_OUTCOME:
+  - <observed behavior and result>
+
+DEVIATIONS:
+  - <expected-vs-actual mismatch, or "none">
+
+EVIDENCE_INDEX:
+  screenshots:
+    - <path-or-url>
+  logs:
+    - <path-or-url>
+  traces:
+    - <path-or-url>
+
+ACCEPTANCE_RESULTS:
+  - id: AC-01
+    result: <PASS|FAIL|N/A>
+    note: <short rationale>
+  - id: AC-02
+    result: <PASS|FAIL|N/A>
+    note: <short rationale>
+
+NEXT_ACTION:
+  owner: <tool-or-human>
+  action: <specific next step>
+  due: <ISO-8601-or-none>
+
+REPORTER: <agent-or-human-name>
