@@ -39,3 +39,6 @@ Linear Naming Convention
 - Phase format: `NN.Phase — <title>` (examples: `00.Phase — Baseline Approvals and Repo Hygiene`, `01.Phase — Core Security Foundations`).
 - Roadmap task format: `NN. <title>` (examples: `01. Auth Store ...`, `12. Site Gateway Topology`).
 - Never use non-padded variants like `Phase 1` or `1. <title>`.
+- Use `docs/ROADMAP.md` as the source of phase/task ordering; do not infer order from issue creation timestamps.
+- Keep phase issues and milestones aligned on the same `NN.Phase` key and use sequential target dates to stabilize sorting.
+- Follow `docs/ops/llm_delivery_timing_ordering_spec.md` for phase windows, ETA classes, and LLM-vs-human timing assumptions.

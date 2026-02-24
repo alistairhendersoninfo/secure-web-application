@@ -13,3 +13,10 @@ When creating or renaming Linear milestones/issues/tasks, use zero-padded number
   - Example: `07. Rate Limits and Backpressure Defaults`
 
 Do not use non-padded forms such as `Phase 1`, `Phase 01`, or `1. <title>`.
+
+Additional constraints:
+
+- Use `docs/ROADMAP.md` as the only source of phase/task order.
+- Phase issue and milestone titles must match on the same `NN.Phase` key.
+- Task titles must use roadmap numbering (`01.` through `12.`) in doc order.
+- Set milestone target dates sequentially by phase number to keep UI sorting stable.
