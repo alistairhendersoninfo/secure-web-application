@@ -1,0 +1,107 @@
+{
+  "model_name": "swap_llm_effort_v1",
+  "units": "minutes",
+  "formula": {
+    "code": "estimate = round(base_human_minutes * delivery_multiplier * (1 + qa_addon + gui_addon + coordination_addon))",
+    "explanation": "Start from difficulty baseline, apply delivery mode ratio, then add testing/coordination overhead."
+  },
+  "difficulty_tiers": {
+    "XS": {
+      "base_human_minutes": 30,
+      "explanation": "Small text/config tweak, single-file, low risk."
+    },
+    "S": {
+      "base_human_minutes": 60,
+      "explanation": "Simple implementation task with limited validation."
+    },
+    "M": {
+      "base_human_minutes": 120,
+      "explanation": "Moderate feature/fix across multiple files with tests."
+    },
+    "L": {
+      "base_human_minutes": 240,
+      "explanation": "Complex multi-component change with integration concerns."
+    },
+    "XL": {
+      "base_human_minutes": 480,
+      "explanation": "Large architectural or high-risk change requiring staged validation."
+    }
+  },
+  "delivery_modes": {
+    "HUMAN_ONLY": {
+      "delivery_multiplier": 1.0,
+      "explanation": "Human implementation without LLM acceleration."
+    },
+    "LLM_ONLY": {
+      "delivery_multiplier": 0.1,
+      "explanation": "LLM-led execution (1/10 of human baseline). Example: S=60 -> 6 min."
+    },
+    "LLM_PLUS_PERSON": {
+      "delivery_multiplier": 0.2,
+      "explanation": "LLM with human oversight/review (1/5 of human baseline). Example: S=60 -> 12 min."
+    }
+  },
+  "overheads": {
+    "qa_addon": {
+      "none": 0.0,
+      "light": 0.1,
+      "standard": 0.2,
+      "deep": 0.35,
+      "explanation": "Non-GUI validation overhead fraction."
+    },
+    "gui_addon": {
+      "enabled": 0.05,
+      "disabled": 0.0,
+      "explanation": "GUI test overhead set to 1/20 (+5%) of baseline-adjusted effort."
+    },
+    "coordination_addon": {
+      "single_agent": 0.0,
+      "multi_agent": 0.1,
+      "multi_agent_with_human_gate": 0.2,
+      "explanation": "Prompt alignment, merge/reconcile, and handoff overhead."
+    }
+  },
+  "examples": [
+    {
+      "input": {
+        "difficulty": "S",
+        "delivery_mode": "LLM_ONLY",
+        "qa": "none",
+        "gui": "disabled",
+        "coordination": "single_agent"
+      },
+      "output_minutes": 6,
+      "explanation": "Matches target example for LLM-only."
+    },
+    {
+      "input": {
+        "difficulty": "S",
+        "delivery_mode": "LLM_PLUS_PERSON",
+        "qa": "none",
+        "gui": "disabled",
+        "coordination": "single_agent"
+      },
+      "output_minutes": 12,
+      "explanation": "Matches target example for LLM+person."
+    },
+    {
+      "input": {
+        "difficulty": "M",
+        "delivery_mode": "LLM_PLUS_PERSON",
+        "qa": "standard",
+        "gui": "enabled",
+        "coordination": "multi_agent"
+      },
+      "output_minutes": 30,
+      "explanation": "Includes QA, GUI overhead, and multi-agent coordination."
+    }
+  ],
+  "metadata_fields_for_issues": [
+    "DIFFICULTY_TIER",
+    "DELIVERY_MODE",
+    "QA_LEVEL",
+    "GUI_TESTING",
+    "COORDINATION_MODE",
+    "ESTIMATED_MINUTES"
+  ]
+}
