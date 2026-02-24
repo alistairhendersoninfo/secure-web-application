@@ -1,0 +1,39 @@
+TASK_ID: GUI-<feature>-<nn>
+TASK_TITLE: <short action-oriented title>
+TASK_REVISION: 1
+SOURCE_SPEC: docs/ops/gui_llm_test_orchestration_spec.md
+
+SCOPE:
+  area: <screen-or-module>
+  environment: <local|staging|prod-like>
+  build: <commit-sha-or-build-id>
+
+OWNER_TOOL: <antigravity|claude-codebook|claude-google-plugin>
+NEXT_TOOL: <antigravity|claude-codebook|claude-google-plugin|none>
+STATUS: QUEUED
+
+PRECONDITIONS:
+  - <state that must already exist>
+
+PROCEDURE:
+  - <deterministic step 1>
+  - <deterministic step 2>
+
+TASK_REQUIRED: <what must be validated or delivered>
+
+EXPECTED_OUTCOME:
+  - <observable expected behavior>
+
+EVIDENCE_REQUIREMENTS:
+  - screenshot
+  - console-log-snippet
+  - network-observation
+
+ACCEPTANCE_CHECKS:
+  - id: AC-01
+    check: <binary pass/fail statement>
+  - id: AC-02
+    check: <binary pass/fail statement>
+
+NOTES:
+  - <optional notes>
