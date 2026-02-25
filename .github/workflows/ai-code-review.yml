@@ -36,7 +36,7 @@ jobs:
             -d "{\"model\":\"claude-3-sonnet-20240229\",\"max_tokens\":2000,\"messages\":[{\"role\":\"user\",\"content\":$(printf %s "$prompt" | jq -Rs .)}]}")
           echo "review=$(echo "$resp" | jq -r '.content[0].text')" >> $GITHUB_OUTPUT
       - name: Post review comment
-        uses: peter-evans/create-or-update-comment@v4
+        uses: peter-evans/create-or-update-comment@v5
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
@@ -68,7 +68,7 @@ jobs:
             -d "$data")
           echo "review=$(echo "$resp" | jq -r '.candidates[0].content.parts[0].text // .candidates[0].content.parts[0].text')" >> $GITHUB_OUTPUT
       - name: Post review comment
-        uses: peter-evans/create-or-update-comment@v4
+        uses: peter-evans/create-or-update-comment@v5
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
