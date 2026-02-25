@@ -10,7 +10,7 @@ hyper = { version = "1", features = ["http2"] }
 hyper-util = { version = "0.1", features = ["server", "http1", "http2", "tokio", "service"] }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 rustls = "0.22"
-tokio-rustls = "0.25"
+tokio-rustls = "0.26"
 rustls-pemfile = "2"
 tower = "0.5"
 tower-http = { version = "0.5", features = ["trace", "set-header"] }
