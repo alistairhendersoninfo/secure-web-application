@@ -1,5 +1,9 @@
 # SPEC: Single Docker Image Deployment (Embedded Auth Store)
 
+> **Status: Legacy / Single-Node Fallback.**
+> For production multi-cluster deployments, see [K3s Infrastructure Spec](./k3s_infrastructure_spec.md).
+> This spec remains valid for edge/minimal single-node deployments.
+
 ## Goals
 - Deliver the application as a single hardened Docker image (no SSH, no proxies), with an embedded encrypted auth store.
 
@@ -17,6 +21,7 @@ flowchart LR
 ```
 
 ## Detailed Design
+- Base image: `alpine:3.22` runtime with musl-linked static binary (multi-stage build from `rust:1-bookworm`).
 - Process: non-root user, read-only filesystem, cap-drop=ALL, tmpfs for `/tmp` and `/run`.
 - TLS: self-signed on first run if enabled; weekly rotation on restart.
 - Auth: default admin created on first run; password printed once to logs and to `/app/auth/INITIAL_ADMIN.txt` (0600); must change on first login.

@@ -1,0 +1,19 @@
+apiVersion: v2
+name: swap-dmz
+description: >-
+  SWAP DMZ cluster Helm chart. Deploys Traefik ingress with Coraza WAF
+  sidecar, reverse proxy to Core cluster, and Headlamp dashboard.
+version: 0.1.0
+appVersion: "0.1.0"
+type: application
+
+keywords:
+  - swap
+  - dmz
+  - waf
+  - ingress
+  - traefik
+  - coraza
+
+maintainers:
+  - name: SWAP Team

@@ -1,0 +1,23 @@
+apiVersion: v2
+name: swap-etl
+description: >-
+  SWAP ETL cluster Helm chart. Deploys log ingestion workers for
+  security event processing with optional MinIO object storage.
+version: 0.1.0
+appVersion: "0.1.0"
+type: application
+
+keywords:
+  - swap
+  - etl
+  - ingestion
+  - logs
+
+maintainers:
+  - name: SWAP Team
+
+dependencies:
+  - name: minio
+    version: "~5.4"
+    repository: https://charts.min.io/
+    condition: minio.enabled

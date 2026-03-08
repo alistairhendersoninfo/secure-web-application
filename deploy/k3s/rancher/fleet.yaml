@@ -1,0 +1,48 @@
+# -- Rancher Fleet GitOps configuration for SWAP multi-cluster deployment
+# Ref: https://fleet.rancher.io/ref-fleet-yaml
+
+defaultNamespace: swap-system
+
+helm:
+  releaseName: swap
+
+targetCustomizations:
+  # -- Core cluster: Controller + PostgreSQL + Headlamp
+  - name: swap-core
+    clusterSelector:
+      matchLabels:
+        swap.zone: core
+    helm:
+      chart: deploy/k3s/charts/swap-core
+      valuesFiles:
+        - deploy/k3s/charts/swap-core/values.yaml
+
+  # -- DMZ cluster: Traefik ingress + Coraza WAF + Headlamp
+  - name: swap-dmz
+    clusterSelector:
+      matchLabels:
+        swap.zone: dmz
+    helm:
+      chart: deploy/k3s/charts/swap-dmz
+      valuesFiles:
+        - deploy/k3s/charts/swap-dmz/values.yaml
+
+  # -- ETL cluster: Ingestion workers + optional MinIO
+  - name: swap-etl
+    clusterSelector:
+      matchLabels:
+        swap.zone: etl
+    helm:
+      chart: deploy/k3s/charts/swap-etl
+      valuesFiles:
+        - deploy/k3s/charts/swap-etl/values.yaml
+
+  # -- Monitoring cluster: Prometheus + Grafana + Alertmanager + Loki
+  - name: swap-monitoring
+    clusterSelector:
+      matchLabels:
+        swap.zone: monitoring
+    helm:
+      chart: deploy/k3s/charts/swap-monitoring
+      valuesFiles:
+        - deploy/k3s/charts/swap-monitoring/values.yaml

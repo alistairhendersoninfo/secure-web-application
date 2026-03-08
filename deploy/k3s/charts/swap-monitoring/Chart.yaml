@@ -1,0 +1,29 @@
+apiVersion: v2
+name: swap-monitoring
+description: >-
+  SWAP Monitoring cluster Helm chart. Deploys Prometheus, Grafana,
+  Alertmanager, and Loki via the kube-prometheus-stack subchart.
+version: 0.1.0
+appVersion: "0.1.0"
+type: application
+
+keywords:
+  - swap
+  - monitoring
+  - prometheus
+  - grafana
+  - alertmanager
+  - loki
+
+maintainers:
+  - name: SWAP Team
+
+dependencies:
+  - name: kube-prometheus-stack
+    version: "~69.8"
+    repository: https://prometheus-community.github.io/helm-charts
+    condition: kube-prometheus-stack.enabled
+  - name: loki
+    version: "~6.29"
+    repository: https://grafana.github.io/helm-charts
+    condition: loki.enabled

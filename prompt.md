@@ -207,6 +207,8 @@ Resilience
 - Single-binary controller (Rust) + single-binary agents (Rust). Systemd units with hardened settings (ProtectSystem, PrivateTmp, NoNewPrivileges, CapabilityBoundingSet, AmbientCapabilities minimal).
 - Backup/restore: encrypted snapshots of the controller DB and append-only audit log.
 - Upgrades: signed binaries; blue/green or canary deploy; automatic agent upgrades via signed packages with staged rollout.
+- **Primary production deployment target: K3s on Alpine 3.22** with a hybrid multi-cluster topology (Core, DMZ, ETL/Data, Monitoring/Obs clusters). Headlamp provides per-cluster local management UI; Rancher serves as fleet manager across clusters. See [K3s Infrastructure Spec](docs/deploy/k3s_infrastructure_spec.md) for full details.
+- The single-binary/systemd model remains valid for edge and minimal deployments where Kubernetes is not warranted.
 
 ## 16) Initial Deliverables and Milestones
 

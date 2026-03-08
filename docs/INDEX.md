@@ -16,3 +16,5 @@ Key Starting Points
 - Multi-LLM GUI test coordination: [docs/ops/gui_llm_test_orchestration_spec.md](./ops/gui_llm_test_orchestration_spec.md)
 - Multi-LLM GUI test usage guide: [docs/ops/gui_llm_test_orchestration_usage.md](./ops/gui_llm_test_orchestration_usage.md)
 - Linear planning docs: [docs/linear/README.md](./linear/README.md)
+- K3s infrastructure deployment: [docs/deploy/k3s_infrastructure_spec.md](./deploy/k3s_infrastructure_spec.md)
+- Helm chart scaffolds: [deploy/k3s/](../deploy/k3s/) (swap-core, swap-dmz, swap-etl, swap-monitoring)
