@@ -1,6 +1,6 @@
 # K3s Infrastructure Deployment Spec
 
-For the full specification, see [`docs/deploy/k3s_infrastructure_spec.md`](https://github.com/alistairhendersoninfo/secure-web-application/blob/main/docs/deploy/k3s_infrastructure_spec.md) in the repository.
+For the full specification, see `docs/deploy/k3s_infrastructure_spec.md` in the repository.
 
 ## Summary
 

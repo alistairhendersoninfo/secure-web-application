@@ -8,7 +8,7 @@
 
 ## Non-Goals
 - Running all SWAP components in a single monolithic cluster.
-- Using a managed Kubernetes service (EKS, GKE, AKS); this spec targets bare-metal and VM deployments.
+- Using a managed Kubernetes service; this spec targets bare-metal and VM deployments.
 - Replacing the SWAP PKI with K3s internal PKI -- the two remain separate (see `docs/security/pki_enrollment_spec.md`).
 - Prescribing specific hardware; node sizing is left to capacity-planning documentation.
 
