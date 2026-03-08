@@ -26,6 +26,13 @@ flowchart LR
 ## Security Posture
 - All artifacts signed; verification enforced before apply; audit logged.
 
+## K3s Upgrade Strategy
+
+- **K3s node upgrades**: Use Rancher's `system-upgrade-controller` with `Plan` CRDs for automated, staged K3s version upgrades across clusters.
+- **Application upgrades**: Helm version bumps applied via `helm upgrade` or Rancher Fleet GitOps (commit new chart version to Git; Fleet syncs automatically).
+- **Coordinated rollouts**: Rancher Fleet `ClusterGroup` targets allow rolling upgrades across clusters in sequence (Core first, then DMZ/ETL/Monitoring) with health gates between stages.
+- **Rollback**: `helm rollback` for application; `system-upgrade-controller` Plan revision for K3s; Rancher Fleet Git revert for GitOps-managed rollouts.
+
 ## Operations
 - Maintenance windows; rate limits on upgrades; observability on success/failure.
 

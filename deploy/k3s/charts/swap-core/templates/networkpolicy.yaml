@@ -1,0 +1,55 @@
+{{- if .Values.networkPolicy.enabled }}
+# -- Default-deny all ingress and egress
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "swap-core.fullname" . }}-default-deny
+  labels:
+    app.kubernetes.io/name: {{ include "swap-core.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+# -- Allow controller ingress from DMZ on gRPC/mTLS port
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "swap-core.fullname" . }}-allow-controller
+  labels:
+    app.kubernetes.io/name: {{ include "swap-core.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: controller
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              swap.zone: dmz
+      ports:
+        - protocol: TCP
+          port: 10443
+  egress:
+    # Allow DNS resolution
+    - to: []
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    # Allow egress to PostgreSQL
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: postgresql
+      ports:
+        - protocol: TCP
+          port: 5432
+{{- end }}

@@ -1,0 +1,58 @@
+# -- SWAP DMZ default values
+
+replicaCount: 2
+
+waf:
+  image:
+    repository: owasp/coraza-proxy-wasm
+    tag: latest
+    pullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+proxy:
+  image:
+    repository: traefik
+    tag: "3.3"
+    pullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: "1"
+      memory: 512Mi
+
+serviceAccount:
+  create: true
+  name: swap-dmz-proxy
+  automountServiceAccountToken: false
+
+service:
+  type: LoadBalancer
+  httpsPort: 443
+  backendPort: 10443
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 65534
+  runAsGroup: 65534
+  readOnlyRootFilesystem: true
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  seccompProfile:
+    type: RuntimeDefault
+
+networkPolicy:
+  enabled: true
+
+backend:
+  coreServiceHost: swap-core-controller.swap-core.svc.cluster.local
+  coreServicePort: 10443

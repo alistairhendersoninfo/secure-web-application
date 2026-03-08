@@ -1,0 +1,81 @@
+# -- SWAP Core default values
+
+replicaCount: 2
+
+image:
+  repository: swap-controller
+  tag: latest
+  pullPolicy: IfNotPresent
+
+serviceAccount:
+  create: true
+  name: swap-controller
+  automountServiceAccountToken: false
+
+service:
+  type: ClusterIP
+  port: 10443
+  protocol: TCP
+  name: grpc-mtls
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 256Mi
+  limits:
+    cpu: "1"
+    memory: 512Mi
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 65534
+  runAsGroup: 65534
+  readOnlyRootFilesystem: true
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  seccompProfile:
+    type: RuntimeDefault
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+networkPolicy:
+  enabled: true
+
+volumes:
+  certs:
+    mountPath: /etc/swap/certs
+    secretName: swap-mtls-certs
+  plugins:
+    mountPath: /opt/swap/plugins
+    emptyDir: true
+
+# -- Bitnami PostgreSQL subchart values
+postgresql:
+  enabled: true
+  auth:
+    database: swap
+    username: swap
+    existingSecret: swap-postgresql-secret
+  primary:
+    persistence:
+      size: 10Gi
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
+      limits:
+        cpu: "1"
+        memory: 1Gi
+    containerSecurityContext:
+      runAsNonRoot: true
+      readOnlyRootFilesystem: true
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      seccompProfile:
+        type: RuntimeDefault

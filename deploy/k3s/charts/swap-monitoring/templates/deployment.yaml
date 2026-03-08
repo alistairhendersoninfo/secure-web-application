@@ -1,0 +1,52 @@
+# -- Monitoring stack is deployed via subchart dependencies
+# (kube-prometheus-stack and loki). This manifest provides a
+# monitoring-agent sidecar ConfigMap and any custom resources
+# not covered by the subcharts.
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "swap-monitoring.fullname" . }}-dashboards
+  labels:
+    app.kubernetes.io/name: {{ include "swap-monitoring.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: grafana
+    grafana_dashboard: "true"
+data:
+  swap-overview.json: |-
+    {
+      "annotations": { "list": [] },
+      "title": "SWAP Overview",
+      "uid": "swap-overview",
+      "version": 1,
+      "panels": []
+    }
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ include "swap-monitoring.fullname" . }}-alerts
+  labels:
+    app.kubernetes.io/name: {{ include "swap-monitoring.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: alerting
+spec:
+  groups:
+    - name: swap.rules
+      rules:
+        - alert: SwapControllerDown
+          expr: up{job="swap-controller"} == 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "SWAP Controller is down"
+            description: "The SWAP controller has been unreachable for 5 minutes."
+        - alert: SwapHighErrorRate
+          expr: rate(swap_request_errors_total[5m]) > 0.05
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High error rate on SWAP controller"
+            description: "Error rate exceeds 5% over the last 10 minutes."

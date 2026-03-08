@@ -38,5 +38,15 @@ sequenceDiagram
 ## Acceptance Criteria
 - Documented helper capabilities per plugin category; apply/rollback sequence; probes and backoff.
 
+## DaemonSet Agent Mode (K3s Deployments)
+
+In K3s deployments, agents can run as DaemonSet pods on K3s nodes:
+- **SecurityContext**: `runAsNonRoot: true`, `readOnlyRootFilesystem: true`, `allowPrivilegeEscalation: false`, `capabilities.drop: ["ALL"]`, `seccompProfile.type: RuntimeDefault`.
+- **Privileged operations**: Use init containers or sidecar containers with narrowly scoped capabilities (e.g., `CAP_NET_ADMIN` for nftables) instead of elevating the main agent process. Init containers run once at startup; sidecars handle ongoing privileged operations via a Unix socket API.
+- **Host access**: Where agents need host-level access (e.g., nftables, AppArmor), use `hostPID: false`, `hostNetwork: false`, and mount only specific host paths (`/etc/nftables.d`, `/etc/apparmor.d`) as read-only where possible.
+- **Standalone mode**: For external hosts not running K3s, agents continue to run as standalone binaries with systemd confinement as described above.
+
+See [K3s Infrastructure Spec](../deploy/k3s_infrastructure_spec.md) for DaemonSet deployment details.
+
 ## Open Questions
 - Common helper framework vs per-plugin helpers.

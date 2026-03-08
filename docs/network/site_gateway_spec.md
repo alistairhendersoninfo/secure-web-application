@@ -28,5 +28,9 @@ flowchart LR
 ## Operations
 - HA pair per site; monitoring and upgrade procedures; IP allowlists between sites.
 
+## K3s Deployment Note
+
+In K3s-based deployments, the DMZ cluster (`swap-dmz`) is the preferred implementation of the site gateway concept. The DMZ cluster runs Traefik as reverse proxy with Coraza WAF and terminates external TLS before forwarding to the Core cluster over mTLS. This spec remains valid for non-K3s bare-agent deployments where a dedicated gateway binary is preferred. See [K3s Infrastructure Spec](../deploy/k3s_infrastructure_spec.md).
+
 ## Acceptance Criteria
 - Defined protocols and relay behaviors; optional deployment guide.

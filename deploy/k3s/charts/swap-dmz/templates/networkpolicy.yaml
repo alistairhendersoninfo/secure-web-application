@@ -1,0 +1,52 @@
+{{- if .Values.networkPolicy.enabled }}
+# -- Default-deny all ingress and egress
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "swap-dmz.fullname" . }}-default-deny
+  labels:
+    app.kubernetes.io/name: {{ include "swap-dmz.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+# -- Allow external HTTPS ingress and egress to Core cluster
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "swap-dmz.fullname" . }}-allow-proxy
+  labels:
+    app.kubernetes.io/name: {{ include "swap-dmz.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: proxy
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow HTTPS from any (public internet via LoadBalancer)
+    - ports:
+        - protocol: TCP
+          port: 443
+  egress:
+    # Allow DNS resolution
+    - to: []
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    # Allow egress to Core cluster on gRPC/mTLS
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              swap.zone: core
+      ports:
+        - protocol: TCP
+          port: 10443
+{{- end }}

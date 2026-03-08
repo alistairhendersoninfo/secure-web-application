@@ -79,11 +79,26 @@ This document sequences implementation work into reviewable milestones with clea
     - Deliverables: Blue/green controller; agent canary; plugin pins/rollback.
     - Acceptance: Staged rollouts with rollback on failure.
 
-## Phase 5 — Extensions (Optional)
+## Phase 5 — K3s Infrastructure Migration
 
-12. Site Gateway Topology
-    - SPEC: docs/network/site_gateway_spec.md (PR #30)
-    - Acceptance: Relay behavior defined and validated in a test site.
+12. Alpine 3.22 Image Build
+    - SPEC: docs/deploy/k3s_infrastructure_spec.md
+    - Deliverables: Multi-stage Dockerfile (`rust:1-bookworm` builder, `alpine:3.22` runtime); musl static binary; OCI image signing.
+    - Acceptance: Image builds in CI; cosign-verified; passes Trivy scan.
+
+13. Core Cluster Helm Chart + K3s Deployment
+    - SPEC: docs/deploy/k3s_infrastructure_spec.md
+    - Deliverables: `swap-core` Helm chart (Controller, PostgreSQL, Auth Store, Plugin Registry); Headlamp; embedded etcd HA; `--secrets-encryption`.
+    - Acceptance: Controller deploys on K3s; gRPC/mTLS functional; agents connect.
+
+14. Multi-Cluster Topology (DMZ, ETL, Monitoring)
+    - SPEC: docs/deploy/k3s_infrastructure_spec.md; docs/network/site_gateway_spec.md (DMZ cluster supersedes site gateway for K3s deployments)
+    - Deliverables: `swap-dmz` (Traefik + Coraza WAF), `swap-etl` (ingestion workers), `swap-monitoring` (Prometheus federation, Grafana, Alertmanager, Loki) Helm charts.
+    - Acceptance: Inter-cluster mTLS validated; NetworkPolicies enforce default-deny; Prometheus federation operational.
+
+15. Rancher Fleet Management
+    - Deliverables: Rancher Fleet GitOps config; cluster registration; coordinated rollouts.
+    - Acceptance: Fleet syncs all charts from Git; staged rollouts across clusters.
 
 ## Cross-Cutting Security
 - Route obfuscation (static slugs) — PR #20
@@ -97,6 +112,8 @@ This document sequences implementation work into reviewable milestones with clea
 - Phase 1 must be completed before Phase 2.
 - Rate limits (Phase 3) depend on Phase 1 SSE endpoint.
 - Node-less build can proceed after SSR routes are in place.
+- Phase 5 (K3s migration) can proceed in parallel with Phases 2-4; requires Phase 1 controller binary to be functional.
+- Alpine image build (Phase 5, item 12) is a prerequisite for all K3s cluster deployments.
 
 ## Status Tracking
 - Use PR numbers in this roadmap for review ordering.

@@ -1,0 +1,23 @@
+apiVersion: v2
+name: swap-core
+description: >-
+  SWAP Core cluster Helm chart. Deploys the Controller (gRPC/mTLS on port
+  10443), PostgreSQL (via Bitnami subchart), and Headlamp dashboard.
+version: 0.1.0
+appVersion: "0.1.0"
+type: application
+
+keywords:
+  - swap
+  - controller
+  - core
+  - security
+
+maintainers:
+  - name: SWAP Team
+
+dependencies:
+  - name: postgresql
+    version: "~16.4"
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled

@@ -31,5 +31,15 @@ flowchart LR
 ## Acceptance Criteria
 - Metrics list documented; health/readiness semantics defined; tracing fields standardized.
 
+## K3s Multi-Cluster Observability
+
+In K3s deployments, observability runs in a dedicated Monitoring/Obs cluster (`swap-monitoring`):
+- **Prometheus federation**: Each cluster runs a local Prometheus instance; the Monitoring cluster federates metrics from Core, DMZ, and ETL clusters over mTLS.
+- **Grafana**: Centralized in the Monitoring cluster with datasources pointing to the federation endpoint.
+- **Alertmanager**: Centralized in the Monitoring cluster; receives alerts from all federated Prometheus instances.
+- **Loki**: Log aggregation from all clusters via Promtail DaemonSets shipping to the Monitoring cluster's Loki endpoint over mTLS.
+
+See [K3s Infrastructure Spec](../deploy/k3s_infrastructure_spec.md) for cluster topology details.
+
 ## Open Questions
 - Per-tenant metrics segmentation.

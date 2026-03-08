@@ -26,5 +26,14 @@ flowchart LR
 ## Operations
 - Secret owners and rotation cadence documented; audit of secret access.
 
+## Kubernetes Secrets (K3s Deployments)
+
+- **K3s secrets encryption**: K3s is configured with `--secrets-encryption` to encrypt Secrets at rest in etcd using AES-CBC or AES-GCM.
+- **Kubernetes Secrets as source**: Application pods mount secrets via `secretRef` environment variables or volume mounts; secrets are created by operators or CI/CD pipelines.
+- **External Secrets Operator** (optional): For production deployments, `external-secrets-operator` syncs secrets from Vault, AWS Secrets Manager, or other backends into Kubernetes Secrets, providing a single abstraction layer.
+- **Rotation**: External Secrets Operator handles rotation by re-syncing from the backend on a configurable interval; pods pick up new secrets via rolling restart or projected volume refresh.
+
+See [K3s Infrastructure Spec](../deploy/k3s_infrastructure_spec.md) for cluster-level security configuration.
+
 ## Acceptance Criteria
 - Secrets flows documented; rotation procedures exist; integration points with KMS/Vault identified.

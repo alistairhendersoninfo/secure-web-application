@@ -1,0 +1,41 @@
+site_name: SWAP — Secure Web Application Platform
+site_description: Hardened security orchestration with K3s multi-cluster deployment
+site_url: https://alistairhendersoninfo.github.io/secure-web-application/
+repo_url: https://github.com/alistairhendersoninfo/secure-web-application
+
+docs_dir: site
+site_dir: site_build
+
+theme:
+  name: material
+  palette:
+    - scheme: slate
+      primary: indigo
+      accent: cyan
+  features:
+    - navigation.sections
+    - navigation.expand
+    - search.suggest
+    - content.code.copy
+
+nav:
+  - Home: index.md
+  - Features: features.md
+  - Architecture: architecture.md
+  - Getting Started: getting-started.md
+  - Specs:
+      - Deployment (K3s): specs/k3s-infrastructure.md
+      - Deployment (Single Image): specs/single-image.md
+
+markdown_extensions:
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - toc:
+      permalink: true
