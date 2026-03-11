@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1"
-axum = { version = "0.7", features = ["http2"] }
+axum = { version = "0.8", features = ["http2"] }
 hyper = { version = "1", features = ["http2"] }
 hyper-util = { version = "0.1", features = ["server", "http1", "http2", "tokio", "service"] }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
